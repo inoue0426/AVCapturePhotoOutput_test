@@ -27,8 +27,9 @@ class ViewController: UIViewController,AVCapturePhotoCaptureDelegate {
     
     override func viewWillAppear(_ animated: Bool) {
         captureSesssion = AVCaptureSession()
-        stillImageOutput = AVCapturePhotoOutput()
         captureSesssion.sessionPreset = AVCaptureSessionPreset1920x1080
+        stillImageOutput = AVCapturePhotoOutput()
+        
         let device = AVCaptureDevice.defaultDevice(withMediaType: AVMediaTypeVideo)
         do {
             let input = try AVCaptureDeviceInput(device: device)
