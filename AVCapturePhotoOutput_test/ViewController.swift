@@ -11,21 +11,23 @@ import AVFoundation
 
 class ViewController: UIViewController,AVCapturePhotoCaptureDelegate {
     @IBOutlet weak var imageView: UIImageView!
-    @IBOutlet weak var button: UIButton!
     
     var captureSesssion: AVCaptureSession!
-    var stillImageOutput: AVCapturePhotoOutput?
-    var previewLayer: AVCaptureVideoPreviewLayer?
+    var stillImageOutput: AVCapturePhotoOutput!
+    //    ↑ 書き換え AVCaptureStillImageOutput → AVCapturePhotoOutput
     
-    @IBAction func takePhoto(_ sender: Any) {
+    @IBAction func takePhoto(_ sender: Any){
         let settingsForMonitoring = AVCapturePhotoSettings()
         settingsForMonitoring.flashMode = .auto
         settingsForMonitoring.isAutoStillImageStabilizationEnabled = true
         settingsForMonitoring.isHighResolutionPhotoEnabled = false
         stillImageOutput?.capturePhoto(with: settingsForMonitoring, delegate: self)
     }
+    //    AVCapturePhotoSettingsという新しいClassがAVCapturePhotoOutputと一緒に追加された。
+    //    フラッシュなどの細かい設定はAVCapturePhotoSettingsで行う
     
-    override func viewWillAppear(_ animated: Bool) {
+    override func viewDidLoad() {
+        super.viewDidLoad()
         captureSesssion = AVCaptureSession()
         captureSesssion.sessionPreset = AVCaptureSessionPreset1920x1080
         stillImageOutput = AVCapturePhotoOutput()
@@ -38,13 +40,10 @@ class ViewController: UIViewController,AVCapturePhotoCaptureDelegate {
                 if (captureSesssion.canAddOutput(stillImageOutput)) {
                     captureSesssion.addOutput(stillImageOutput)
                     captureSesssion.startRunning()
-                    previewLayer = AVCaptureVideoPreviewLayer(session: captureSesssion)
-                    previewLayer?.videoGravity = AVLayerVideoGravityResizeAspect
-                    previewLayer?.connection.videoOrientation = AVCaptureVideoOrientation.portrait // カメラの向き
-
-                    imageView.layer.addSublayer(previewLayer!)
-                    previewLayer?.position = CGPoint(x: self.imageView.frame.width / 2, y: self.imageView.frame.height / 2)
-                    previewLayer?.bounds = imageView.frame
+                    let captureVideoLayer: AVCaptureVideoPreviewLayer = AVCaptureVideoPreviewLayer.init(session: captureSesssion)
+                    captureVideoLayer.frame = self.imageView.bounds
+                    captureVideoLayer.videoGravity = AVLayerVideoGravityResizeAspectFill
+                    self.imageView.layer.addSublayer(captureVideoLayer)
                 }
             }
         }
@@ -53,15 +52,10 @@ class ViewController: UIViewController,AVCapturePhotoCaptureDelegate {
         }
     }
     
-    // デリゲート。カメラで撮影が完了した後呼ばれる。JPEG形式でフォトライブラリに保存。
     func capture(_ captureOutput: AVCapturePhotoOutput, didFinishProcessingPhotoSampleBuffer photoSampleBuffer: CMSampleBuffer?, previewPhotoSampleBuffer: CMSampleBuffer?, resolvedSettings: AVCaptureResolvedPhotoSettings, bracketSettings: AVCaptureBracketedStillImageSettings?, error: Error?) {
-        
         if let photoSampleBuffer = photoSampleBuffer {
-            // JPEG形式で画像データを取得
             let photoData = AVCapturePhotoOutput.jpegPhotoDataRepresentation(forJPEGSampleBuffer: photoSampleBuffer, previewPhotoSampleBuffer: previewPhotoSampleBuffer)
             let image = UIImage(data: photoData!)
-            
-            // フォトライブラリに保存
             UIImageWriteToSavedPhotosAlbum(image!, nil, nil, nil)
         }
     }
