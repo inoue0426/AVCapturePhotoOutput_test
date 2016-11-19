@@ -47,6 +47,44 @@ class ViewController: UIViewController,AVCapturePhotoCaptureDelegate {
                 }
             }
         }
+//        今回は📷のFront、Back、Dualの指定はしていないが、するとしたらこんな感じ
+//        do {
+//            var defaultVideoDevice: AVCaptureDevice?
+//            defaultVideoDevice = dualCameraDevice
+//        }
+//            else if let backCameraDevice = AVCaptureDevice.defaultDevice(withDeviceType: .builtInWideAngleCamera, mediaType: AVMediaTypeVideo, position: .back) {
+//                defaultVideoDevice = backCameraDevice
+//            }
+//            else if let frontCameraDevice = AVCaptureDevice.defaultDevice(withDeviceType: .builtInWideAngleCamera, mediaType: AVMediaTypeVideo, position: .front) {
+//               defaultVideoDevice = frontCameraDevice
+//            }
+//            
+//            let videoDeviceInput = try AVCaptureDeviceInput(device: defaultVideoDevice)
+//            
+//            if session.canAddInput(videoDeviceInput) {
+//                session.addInput(videoDeviceInput)
+//                self.videoDeviceInput = videoDeviceInput
+//                
+//                DispatchQueue.main.async {
+//                    let statusBarOrientation = UIApplication.shared.statusBarOrientation
+//                    var initialVideoOrientation: AVCaptureVideoOrientation = .portrait
+//                    if statusBarOrientation != .unknown {
+//                        if let videoOrientation = statusBarOrientation.videoOrientation {
+//                            initialVideoOrientation = videoOrientation
+//                        }
+//                    }
+//                    
+//                    self.previewView.videoPreviewLayer.connection.videoOrientation = initialVideoOrientation
+//                }
+//            }
+//            else {
+//                print("Could not add video device input to the session")
+//                setupResult = .configurationFailed
+//                session.commitConfiguration()
+//                return
+//            }
+//        }
+            
         catch {
             print(error)
         }
